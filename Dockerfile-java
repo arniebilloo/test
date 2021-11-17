@@ -1,0 +1,33 @@
+FROM registry.access.redhat.com/ubi8/ubi-minimal as builder
+
+ARG CLI_VERSION
+ARG BUILD_DATE
+
+ENV GOPATH=/opt/app-root/go \
+    GO_VERSION=1.16.2 \
+    PATH=${PATH}:${GOPATH}/bin:/usr/local/go/bin:
+
+LABEL maintainer="ab" \
+      org.label-schema.schema-version="1.0" \
+      org.label-schema.vendor="ab" \
+      org.label-schema.name="scan-base" \
+      org.label-schema.version=$CLI_VERSION \
+      org.label-schema.license="GPL-3.0-or-later" \
+      org.label-schema.description="Base image containing multiple programming languages" \
+      org.label-schema.url="https://www.ab.io" \
+      org.label-schema.usage="https://github.com/ab/scan-base" \
+      org.label-schema.build-date=$BUILD_DATE \
+      org.label-schema.vcs-url="https://github.com/ab/scan-base.git" \
+      org.label-schema.docker.cmd="docker run --rm -it --name scan-base ab/scan-base-java /bin/bash"
+
+USER root
+
+RUN echo -e "[nodejs]\nname=nodejs\nstream=14\nprofiles=\nstate=enabled\n" > /etc/dnf/modules.d/nodejs.module \
+    && microdnf install -y gcc tar shadow-utils sudo xz curl wget which zip unzip python38 \
+      findutils nodejs git-core java-1.8.0-openjdk-headless java-11-openjdk-headless libsecret \
+    && curl -LO "https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz" \
+    && tar -C /usr/local -xzf go${GO_VERSION}.linux-amd64.tar.gz \
+    && rm go${GO_VERSION}.linux-amd64.tar.gz \
+    && npm install --unsafe-perm -g yarn \
+    && rm -rf /var/cache/yum \
+    && microdnf clean all
