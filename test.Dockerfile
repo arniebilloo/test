@@ -1,5 +1,5 @@
 
-FROM golang:1.17.1-alpine3.14
+FROM golang:1.18beta2-alpine3.14
 # Source: https://github.com/docker-library/golang/blob/9bf6daddb324a4d8e82b0613cf348a6eff363f95/1.10/alpine3.7/Dockerfile
 LABEL maintainer="a@b.com"
 
