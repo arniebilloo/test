@@ -13,7 +13,7 @@ RUN cd /ui && npm run build
 
 RUN cd /ui/public/app && sed -i "s/app.js/app.js?$(date +%s)/" index.html
 
-FROM alpine
+FROM alpine:3.18.3
 
 RUN mkdir -p /serve
 
